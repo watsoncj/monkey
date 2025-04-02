@@ -7,7 +7,6 @@ import (
 
 	"github.com/watsoncj/monkey/lexer"
 	"github.com/watsoncj/monkey/parser"
-	"github.com/watsoncj/monkey/token"
 )
 
 const PROMPT = ">> "
@@ -24,12 +23,22 @@ func Start(in io.Reader, out io.Writer) {
 
 		line := scanner.Text()
 		l := lexer.New(line)
-		for tok := l.NextToken(); tok.Type != token.EOF; tok = l.NextToken() {
-			fmt.Fprintf(out, "%+v\n", tok)
-		}
-
 		p := parser.New(l)
 		program := p.ParseProgram()
-		fmt.Fprintf(out, "Parsed (%d statements):\n%+v\n", len(program.Statements), program.String())
+
+		if len(p.Errors()) != 0 {
+			printParserErrors(out, p.Errors())
+			continue
+		}
+
+		io.WriteString(out, program.String())
+		io.WriteString(out, "\n")
+	}
+}
+
+func printParserErrors(out io.Writer, errors []string) {
+	io.WriteString(out, "Woops! We ran into some monkey business here!\n")
+	for _, msg := range errors {
+		io.WriteString(out, "\t"+msg+"\n")
 	}
 }
