@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/watsoncj/monkey/evaluator"
 	"github.com/watsoncj/monkey/lexer"
 	"github.com/watsoncj/monkey/parser"
 )
@@ -31,7 +32,10 @@ func Start(in io.Reader, out io.Writer) {
 			continue
 		}
 
-		io.WriteString(out, program.String())
+		// io.WriteString(out, program.String())
+		//
+		obj := evaluator.Eval(program)
+		io.WriteString(out, obj.Inspect())
 		io.WriteString(out, "\n")
 	}
 }
