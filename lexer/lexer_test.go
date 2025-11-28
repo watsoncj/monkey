@@ -31,8 +31,8 @@ if (5 < 10) {
 
 10 == 10;
 10 != 9;
-
-
+"helloworld"
+"hello world";
 `
 	// if (true) { return 10 }
 
@@ -135,6 +135,10 @@ if (5 < 10) {
 		{token.NOT_EQ, "!="},
 		{token.INT, "9"},
 		{token.SEMICOLON, ";"},
+		{token.STRING, "helloworld"},
+		{token.STRING, "hello world"},
+		{token.SEMICOLON, ";"},
+		{token.EOF, ""},
 	}
 
 	l := New(input)

@@ -191,6 +191,7 @@ func TestErrorHanding(t *testing.T) {
 		{"if(1==1) { return true+false; }", "unknown operator: BOOLEAN + BOOLEAN"},
 		{"if(1==1) { return true+false; } else { return 10; }", "unknown operator: BOOLEAN + BOOLEAN"},
 		{"if(10>1){ if(10>1){ return true+false; } return 20; }", "unknown operator: BOOLEAN + BOOLEAN"},
+		{"\"Hello\" - \"World\"", "unknown operator: STRING - STRING"},
 	}
 
 	for _, tt := range tests {
@@ -266,5 +267,33 @@ func TestFunctionApplication(t *testing.T) {
 	for _, tt := range tests {
 		evaluated := testEval(tt.input)
 		testIntegerObject(t, evaluated, tt.expected)
+	}
+}
+
+func TestStringLiteral(t *testing.T) {
+	input := `"hello world";`
+
+	evaluated := testEval(input)
+	str, ok := evaluated.(*object.String)
+	if !ok {
+		t.Fatalf("object is not String. got=%T(%+v)", evaluated, evaluated)
+	}
+
+	if str.Value != "hello world" {
+		t.Fatalf("string has wrong value. got=%q", str.Value)
+	}
+}
+
+func TestStringConcatenation(t *testing.T) {
+	input := `"hello" + " " + "world";`
+
+	evaluated := testEval(input)
+	str, ok := evaluated.(*object.String)
+	if !ok {
+		t.Fatalf("object is not String. got=%T(%+v)", evaluated, evaluated)
+	}
+
+	if str.Value != "hello world" {
+		t.Fatalf("string has wrong value. got=%q", str.Value)
 	}
 }

@@ -33,7 +33,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		if isError(right) {
 			return right
 		}
-		return evalInfixExpr(node.Operator, left, right)
+		return evalInfixExpression(node.Operator, left, right)
 
 	case *ast.PrefixExpression:
 		right := Eval(node.Right, env)
@@ -44,6 +44,9 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 
 	case *ast.IntegerLiteral:
 		return &object.Integer{Value: node.Value}
+
+	case *ast.StringLiteral:
+		return &object.String{Value: node.Value}
 
 	case *ast.Boolean:
 		return nativeBoolToBooleanObject(node.Value)
@@ -162,12 +165,14 @@ func isTruthy(obj object.Object) bool {
 	}
 }
 
-func evalInfixExpr(op string, left, right object.Object) object.Object {
+func evalInfixExpression(op string, left, right object.Object) object.Object {
 	switch {
 	case left.Type() != right.Type():
 		return newError("type mismatch: %s %s %s", left.Type(), op, right.Type())
 	case left.Type() == object.INTEGER_OBJ && right.Type() == object.INTEGER_OBJ:
 		return evalIntegerInfixExpression(op, left, right)
+	case left.Type() == object.STRING_OBJ && right.Type() == object.STRING_OBJ:
+		return evalStringInfixExpression(op, left, right)
 	case op == "==":
 		return nativeBoolToBooleanObject(left == right)
 	case op == "!=":
@@ -209,6 +214,18 @@ func evalIntegerInfixExpression(op string, left, right object.Object) object.Obj
 	default:
 		return newError("unknown operator: %s %s %s", left.Type(), op, right.Type())
 	}
+}
+
+func evalStringInfixExpression(op string, left, right object.Object) object.Object {
+	leftVal := left.(*object.String).Value
+	rightVal := right.(*object.String).Value
+	switch op {
+	case "+":
+		return &object.String{Value: leftVal + rightVal}
+	default:
+		return newError("unknown operator: %s %s %s", left.Type(), op, right.Type())
+	}
+
 }
 
 func evalPrefixExpr(op string, right object.Object) object.Object {
