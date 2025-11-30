@@ -33,6 +33,7 @@ if (5 < 10) {
 10 != 9;
 "helloworld"
 "hello world";
+[1, 2];
 `
 	// if (true) { return 10 }
 
@@ -137,6 +138,12 @@ if (5 < 10) {
 		{token.SEMICOLON, ";"},
 		{token.STRING, "helloworld"},
 		{token.STRING, "hello world"},
+		{token.SEMICOLON, ";"},
+		{token.LBRACKET, "["},
+		{token.INT, "1"},
+		{token.COMMA, ","},
+		{token.INT, "2"},
+		{token.RBRACKET, "]"},
 		{token.SEMICOLON, ";"},
 		{token.EOF, ""},
 	}
